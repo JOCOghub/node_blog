@@ -48,10 +48,46 @@ const blog_delete = (req, res) => {
         });
 }
 
+const blog_update_get = (req, res) => {
+    const id = req.params.id;
+
+    Blog.findById(id)
+        .then(blog => {
+            if (!blog) {
+                return res.status(404).render('404', { title: 'Blog Not Found' });
+            }
+            res.render('update', { title: 'Update Blog', blog }); // Pass blog data to the view
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).render('500', { title: 'Server Error' });
+        });
+};
+
+const blog_update = (req, res) => {
+    const id = req.params.id;
+    const updatedData = req.body;
+
+    Blog.findByIdAndUpdate(id, updatedData, { new: true })
+        .then(result => {
+            res.redirect('/blogs'); // Redirect to index page after successful update
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).render('500', { title: 'Server Error' });
+        });
+};
+
+
+
+
+
 module.exports = {
     blog_index,
     blog_details,
     blog_create_get,
     blog_create_post,
-    blog_delete
+    blog_delete,
+    blog_update,
+    blog_update_get
 }
